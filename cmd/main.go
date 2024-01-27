@@ -13,7 +13,48 @@ const (
 	Lib
 )
 
+type SubcommandType int
+
+const (
+	InitProject SubcommandType = iota
+	CreateModule
+)
+
 func main() {
+	subcommand := welcomeFormCmd()
+
+	switch subcommand {
+	case InitProject:
+		initProjectCmd()
+	case CreateModule:
+		createModuleCmd()
+	}
+}
+
+func welcomeFormCmd() (subcommand SubcommandType) {
+	err := huh.NewForm(
+		huh.NewGroup(
+			huh.NewSelect[SubcommandType]().
+				Title("Subcommand").
+				Options(
+					huh.NewOption("Init Project", InitProject),
+					huh.NewOption("Create Module", CreateModule),
+				).
+				Value(&subcommand),
+		),
+	).Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return
+}
+
+func initProjectCmd() {
+	log.Println("Init Project")
+}
+
+func createModuleCmd() {
 	var moduleType ModuleType
 	var moduleName string
 
