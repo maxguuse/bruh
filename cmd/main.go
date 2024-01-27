@@ -97,8 +97,57 @@ func createModuleCmd() {
 
 	switch moduleType {
 	case App:
-		log.Println("App: ", moduleName)
+		createAppCmd(moduleName)
 	case Lib:
 		log.Println("Lib: ", moduleName)
 	}
+}
+
+func createAppCmd(appName string) {
+	appsDir := "apps"
+
+	createAppFolderCmd := exec.Command("mkdir", appName)
+	createAppFolderCmd.Dir = appsDir
+	_, stderr := createAppFolderCmd.Output()
+	if stderr != nil {
+		log.Fatal(stderr)
+	}
+
+	log.Println("Created app folder: ", appName)
+
+	goModInitCmd := exec.Command("go", "mod", "init", appName)
+	goModInitCmd.Dir = appsDir + "/" + appName
+	_, stderr = goModInitCmd.Output()
+	if stderr != nil {
+		log.Fatal(stderr)
+	}
+
+	log.Println("Initialized go module: ", appName)
+
+	addModToWork := exec.Command("go", "work", "use", ".")
+	addModToWork.Dir = appsDir + "/" + appName
+	_, stderr = addModToWork.Output()
+	if stderr != nil {
+		log.Fatal(stderr)
+	}
+
+	log.Println("Added module to go workspace: ", appName)
+
+	createBaseFoldersCmd := exec.Command("mkdir", "cmd", "internal")
+	createBaseFoldersCmd.Dir = appsDir + "/" + appName
+	_, stderr = createBaseFoldersCmd.Output()
+	if stderr != nil {
+		log.Fatal(stderr)
+	}
+
+	log.Println("Created base folders: ", "cmd", "internal")
+
+	createMainFileCmd := exec.Command("touch", "main.go")
+	createMainFileCmd.Dir = appsDir + "/" + appName + "/cmd"
+	_, stderr = createMainFileCmd.Output()
+	if stderr != nil {
+		log.Fatal(stderr)
+	}
+
+	log.Println("Created main file: ", "main.go")
 }
