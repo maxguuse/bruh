@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os/exec"
 
 	"github.com/charmbracelet/huh"
 )
@@ -51,7 +52,19 @@ func welcomeFormCmd() (subcommand SubcommandType) {
 }
 
 func initProjectCmd() {
-	log.Println("Init Project")
+	appsDir := "apps"
+	libsDir := "libs"
+
+	mkdirCmd := exec.Command("mkdir", appsDir, libsDir)
+
+	_, stderr := mkdirCmd.Output()
+	if stderr != nil {
+		log.Fatal(stderr)
+	}
+
+	log.Println("Created directories: ", appsDir, libsDir)
+
+	welcomeFormCmd()
 }
 
 func createModuleCmd() {
