@@ -1,6 +1,11 @@
 # bruh
 A CLI utility to easily use the Golang project structure that I prefer.
 
+## Installation
+```
+go install github.com/maxguuse/bruh/cmd/bruh@dev
+```
+
 ## Possible output project structure
 ```
 .
