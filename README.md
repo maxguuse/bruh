@@ -3,7 +3,7 @@ A CLI utility to easily use the Golang project structure that I prefer.
 
 ## Installation
 ```
-go install github.com/maxguuse/bruh/cmd/bruh@dev
+go install github.com/maxguuse/bruh/cmd/bruh@latest
 ```
 
 ## Possible output project structure
