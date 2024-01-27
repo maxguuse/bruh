@@ -21,6 +21,11 @@ const (
 	CreateModule
 )
 
+const (
+	AppsDir = "apps"
+	LibsDir = "libs"
+)
+
 func main() {
 	subcommand := welcomeFormCmd()
 
@@ -52,16 +57,13 @@ func welcomeFormCmd() (subcommand SubcommandType) {
 }
 
 func initProjectCmd() {
-	appsDir := "apps"
-	libsDir := "libs"
-
-	mkdirCmd := exec.Command("mkdir", appsDir, libsDir)
+	mkdirCmd := exec.Command("mkdir", AppsDir, LibsDir)
 	_, stderr := mkdirCmd.Output()
 	if stderr != nil {
 		log.Fatal(stderr)
 	}
 
-	log.Println("Created directories: ", appsDir, libsDir)
+	log.Println("Created directories: ", AppsDir, LibsDir)
 
 	goWorkInit := exec.Command("go", "work", "init")
 	_, stderr = goWorkInit.Output()
@@ -104,10 +106,8 @@ func createModuleCmd() {
 }
 
 func createAppCmd(appName string) {
-	appsDir := "apps"
-
 	createAppFolderCmd := exec.Command("mkdir", appName)
-	createAppFolderCmd.Dir = appsDir
+	createAppFolderCmd.Dir = AppsDir
 	_, stderr := createAppFolderCmd.Output()
 	if stderr != nil {
 		log.Fatal(stderr)
@@ -116,7 +116,7 @@ func createAppCmd(appName string) {
 	log.Println("Created app folder: ", appName)
 
 	goModInitCmd := exec.Command("go", "mod", "init", appName)
-	goModInitCmd.Dir = appsDir + "/" + appName
+	goModInitCmd.Dir = AppsDir + "/" + appName
 	_, stderr = goModInitCmd.Output()
 	if stderr != nil {
 		log.Fatal(stderr)
@@ -125,7 +125,7 @@ func createAppCmd(appName string) {
 	log.Println("Initialized go module: ", appName)
 
 	addModToWork := exec.Command("go", "work", "use", ".")
-	addModToWork.Dir = appsDir + "/" + appName
+	addModToWork.Dir = AppsDir + "/" + appName
 	_, stderr = addModToWork.Output()
 	if stderr != nil {
 		log.Fatal(stderr)
@@ -134,7 +134,7 @@ func createAppCmd(appName string) {
 	log.Println("Added module to go workspace: ", appName)
 
 	createBaseFoldersCmd := exec.Command("mkdir", "cmd", "internal")
-	createBaseFoldersCmd.Dir = appsDir + "/" + appName
+	createBaseFoldersCmd.Dir = AppsDir + "/" + appName
 	_, stderr = createBaseFoldersCmd.Output()
 	if stderr != nil {
 		log.Fatal(stderr)
@@ -143,7 +143,7 @@ func createAppCmd(appName string) {
 	log.Println("Created base folders: ", "cmd", "internal")
 
 	createMainFileCmd := exec.Command("touch", "main.go")
-	createMainFileCmd.Dir = appsDir + "/" + appName + "/cmd"
+	createMainFileCmd.Dir = AppsDir + "/" + appName + "/cmd"
 	_, stderr = createMainFileCmd.Output()
 	if stderr != nil {
 		log.Fatal(stderr)
