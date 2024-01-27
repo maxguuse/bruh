@@ -5,6 +5,7 @@ import (
 	"os/exec"
 
 	"github.com/charmbracelet/huh"
+	"github.com/samber/lo"
 )
 
 type ModuleType int
@@ -106,36 +107,15 @@ func createModuleCmd() {
 }
 
 func createAppCmd(appName string) {
-	createAppFolderCmd := exec.Command("mkdir", appName)
-	createAppFolderCmd.Dir = AppsDir
-	_, stderr := createAppFolderCmd.Output()
-	if stderr != nil {
-		log.Fatal(stderr)
+	err := createGoModule(appName, App)
+	if err != nil {
+		log.Fatal(err)
 	}
-
-	log.Println("Created app folder: ", appName)
-
-	goModInitCmd := exec.Command("go", "mod", "init", appName)
-	goModInitCmd.Dir = AppsDir + "/" + appName
-	_, stderr = goModInitCmd.Output()
-	if stderr != nil {
-		log.Fatal(stderr)
-	}
-
-	log.Println("Initialized go module: ", appName)
-
-	addModToWork := exec.Command("go", "work", "use", ".")
-	addModToWork.Dir = AppsDir + "/" + appName
-	_, stderr = addModToWork.Output()
-	if stderr != nil {
-		log.Fatal(stderr)
-	}
-
-	log.Println("Added module to go workspace: ", appName)
+	log.Println("Created Go module: ", appName)
 
 	createBaseFoldersCmd := exec.Command("mkdir", "cmd", "internal")
 	createBaseFoldersCmd.Dir = AppsDir + "/" + appName
-	_, stderr = createBaseFoldersCmd.Output()
+	_, stderr := createBaseFoldersCmd.Output()
 	if stderr != nil {
 		log.Fatal(stderr)
 	}
@@ -153,39 +133,76 @@ func createAppCmd(appName string) {
 }
 
 func createLibCmd(libName string) {
-	createAppFolderCmd := exec.Command("mkdir", libName)
-	createAppFolderCmd.Dir = LibsDir
-	_, stderr := createAppFolderCmd.Output()
-	if stderr != nil {
-		log.Fatal(stderr)
+	err := createGoModule(libName, Lib)
+	if err != nil {
+		log.Fatal(err)
 	}
-
-	log.Println("Created app folder: ", libName)
-
-	goModInitCmd := exec.Command("go", "mod", "init", libName)
-	goModInitCmd.Dir = LibsDir + "/" + libName
-	_, stderr = goModInitCmd.Output()
-	if stderr != nil {
-		log.Fatal(stderr)
-	}
-
-	log.Println("Initialized go module: ", libName)
-
-	addModToWork := exec.Command("go", "work", "use", ".")
-	addModToWork.Dir = LibsDir + "/" + libName
-	_, stderr = addModToWork.Output()
-	if stderr != nil {
-		log.Fatal(stderr)
-	}
-
-	log.Println("Added module to go workspace: ", libName)
+	log.Println("Created Go module: ", libName)
 
 	createMainFileCmd := exec.Command("touch", "main.go")
 	createMainFileCmd.Dir = LibsDir + "/" + libName
-	_, stderr = createMainFileCmd.Output()
+	_, stderr := createMainFileCmd.Output()
 	if stderr != nil {
 		log.Fatal(stderr)
 	}
 
 	log.Println("Created main file: ", "main.go")
+}
+
+func createGoModule(moduleName string, moduleType ModuleType) error {
+	err := createModuleFolder(moduleName, moduleType)
+	if err != nil {
+		return err
+	}
+
+	err = initGoModule(moduleName, moduleType)
+	if err != nil {
+		return err
+	}
+
+	err = addGoModuleToWorkspace(moduleName, moduleType)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func createModuleFolder(moduleName string, moduleType ModuleType) error {
+	rootDir := lo.If(moduleType == App, AppsDir).Else(LibsDir)
+
+	createAppFolderCmd := exec.Command("mkdir", moduleName)
+	createAppFolderCmd.Dir = rootDir
+	_, err := createAppFolderCmd.Output()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func initGoModule(moduleName string, moduleType ModuleType) error {
+	rootDir := lo.If(moduleType == App, AppsDir).Else(LibsDir)
+
+	goModInitCmd := exec.Command("go", "mod", "init", moduleName)
+	goModInitCmd.Dir = rootDir + "/" + moduleName
+	_, err := goModInitCmd.Output()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func addGoModuleToWorkspace(moduleName string, moduleType ModuleType) error {
+	rootDir := lo.If(moduleType == App, AppsDir).Else(LibsDir)
+
+	addModToWork := exec.Command("go", "work", "use", ".")
+	addModToWork.Dir = rootDir + "/" + moduleName
+	_, err := addModToWork.Output()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
