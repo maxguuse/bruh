@@ -56,7 +56,6 @@ func initProjectCmd() {
 	libsDir := "libs"
 
 	mkdirCmd := exec.Command("mkdir", appsDir, libsDir)
-
 	_, stderr := mkdirCmd.Output()
 	if stderr != nil {
 		log.Fatal(stderr)
@@ -64,7 +63,13 @@ func initProjectCmd() {
 
 	log.Println("Created directories: ", appsDir, libsDir)
 
-	welcomeFormCmd()
+	goWorkInit := exec.Command("go", "work", "init")
+	_, stderr = goWorkInit.Output()
+	if stderr != nil {
+		log.Fatal(stderr)
+	}
+
+	log.Println("Initialized go workspace")
 }
 
 func createModuleCmd() {
