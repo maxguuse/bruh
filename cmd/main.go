@@ -161,16 +161,30 @@ func createModuleCmd() {
 		log.Fatal(err)
 	}
 
+	cfg := &Config{}
+
+	blob, err := os.ReadFile("bruh.yaml")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = yaml.Unmarshal(blob, cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	project := cfg.Project
+
 	switch moduleType {
 	case App:
-		createAppCmd(moduleName)
+		createAppCmd(moduleName, project)
 	case Lib:
-		createLibCmd(moduleName)
+		createLibCmd(moduleName, project)
 	}
 }
 
-func createAppCmd(appName string) {
-	err := createGoModule(appName, App)
+func createAppCmd(appName string, project ProjectDetails) {
+	err := createGoModule(appName, App, project)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -195,8 +209,8 @@ func createAppCmd(appName string) {
 	log.Println("Created main file: ", "main.go")
 }
 
-func createLibCmd(libName string) {
-	err := createGoModule(libName, Lib)
+func createLibCmd(libName string, project ProjectDetails) {
+	err := createGoModule(libName, Lib, project)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -212,13 +226,13 @@ func createLibCmd(libName string) {
 	log.Println("Created main file: ", "main.go")
 }
 
-func createGoModule(moduleName string, moduleType ModuleType) error {
+func createGoModule(moduleName string, moduleType ModuleType, project ProjectDetails) error {
 	err := createModuleFolder(moduleName, moduleType)
 	if err != nil {
 		return err
 	}
 
-	err = initGoModule(moduleName, moduleType)
+	err = initGoModule(moduleName, moduleType, project)
 	if err != nil {
 		return err
 	}
@@ -244,10 +258,12 @@ func createModuleFolder(moduleName string, moduleType ModuleType) error {
 	return nil
 }
 
-func initGoModule(moduleName string, moduleType ModuleType) error {
+func initGoModule(moduleName string, moduleType ModuleType, project ProjectDetails) error {
 	rootDir := lo.If(moduleType == App, AppsDir).Else(LibsDir)
 
-	goModInitCmd := exec.Command("go", "mod", "init", moduleName)
+	module := "github.com/" + project.Owner + "/" + project.Name + "/" + rootDir + "/" + moduleName
+
+	goModInitCmd := exec.Command("go", "mod", "init", module)
 	goModInitCmd.Dir = rootDir + "/" + moduleName
 	_, err := goModInitCmd.Output()
 	if err != nil {
