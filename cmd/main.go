@@ -57,7 +57,17 @@ func welcomeFormCmd() (subcommand SubcommandType) {
 	return
 }
 
+type Config struct {
+	Project ProjectDetails `yaml:"project"`
+}
+
 func initProjectCmd() {
+	project, err := askProjectDetailsForm()
+	if err != nil || project.Name == "" || project.Owner == "" {
+		log.Fatal("Invalid project details")
+	}
+	log.Println("Project Details: ", project)
+
 	mkdirCmd := exec.Command("mkdir", AppsDir, LibsDir)
 	_, stderr := mkdirCmd.Output()
 	if stderr != nil {
@@ -73,6 +83,36 @@ func initProjectCmd() {
 	}
 
 	log.Println("Initialized go workspace")
+}
+
+type ProjectDetails struct {
+	Name  string `yaml:"name"`
+	Owner string `yaml:"owner"`
+}
+
+func askProjectDetailsForm() (*ProjectDetails, error) {
+	var project ProjectDetails
+
+	err := huh.NewForm(
+		huh.NewGroup(
+			huh.NewInput().
+				Title("Project Name:").
+				CharLimit(50).
+				Inline(true).
+				Value(&project.Name),
+			huh.NewInput().
+				Title("Owner:").
+				CharLimit(50).
+				Inline(true).
+				Value(&project.Owner),
+		),
+	).Run()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &project, nil
 }
 
 func createModuleCmd() {
