@@ -10,17 +10,7 @@ import (
 )
 
 func CreateModule() {
-	form := forms.AskForModuleInfo()
-
-	err := form.Run()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	module := &types.Module{
-		Name: form.GetString(forms.KeyModuleName),
-		Type: types.ModuleType(form.GetInt(forms.KeyModuleType)),
-	}
+	module := forms.NewModuleInfo().Run()
 
 	cfg := &types.Config{}
 

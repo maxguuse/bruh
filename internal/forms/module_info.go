@@ -1,6 +1,8 @@
 package forms
 
 import (
+	"log"
+
 	"github.com/charmbracelet/huh"
 	"github.com/maxguuse/bruh/internal/types"
 )
@@ -10,7 +12,11 @@ const (
 	KeyModuleName = "module_name"
 )
 
-func AskForModuleInfo() *huh.Form {
+type ModuleInfo struct {
+	*huh.Form
+}
+
+func NewModuleInfo() *ModuleInfo {
 	form := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[types.ModuleType]().
@@ -27,5 +33,19 @@ func AskForModuleInfo() *huh.Form {
 		),
 	)
 
-	return form
+	return &ModuleInfo{
+		form,
+	}
+}
+
+func (m *ModuleInfo) Run() *types.Module {
+	err := m.Form.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return &types.Module{
+		Name: m.Form.GetString(KeyModuleName),
+		Type: types.ModuleType(m.Form.GetInt(KeyModuleType)),
+	}
 }

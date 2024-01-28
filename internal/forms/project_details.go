@@ -1,7 +1,10 @@
 package forms
 
 import (
+	"log"
+
 	"github.com/charmbracelet/huh"
+	"github.com/maxguuse/bruh/internal/types"
 )
 
 const (
@@ -9,7 +12,11 @@ const (
 	KeyProjectOwner = "project_owner"
 )
 
-func AskForProjectDetails() *huh.Form {
+type ProjectDetails struct {
+	*huh.Form
+}
+
+func NewProjectDetails() *ProjectDetails {
 	form := huh.NewForm(
 		huh.NewGroup(
 			huh.NewInput().
@@ -25,5 +32,19 @@ func AskForProjectDetails() *huh.Form {
 		),
 	)
 
-	return form
+	return &ProjectDetails{
+		form,
+	}
+}
+
+func (p *ProjectDetails) Run() *types.ProjectDetails {
+	err := p.Form.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return &types.ProjectDetails{
+		Name:  p.Form.GetString(KeyProjectName),
+		Owner: p.Form.GetString(KeyProjectOwner),
+	}
 }

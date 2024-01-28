@@ -3,23 +3,8 @@ package cmds
 import (
 	"os/exec"
 
-	"github.com/maxguuse/bruh/internal/forms"
 	"github.com/maxguuse/bruh/internal/types"
 )
-
-func runAskForProjectDetailsForm() (*types.ProjectDetails, error) {
-	form := forms.AskForProjectDetails()
-
-	err := form.Run()
-	if err != nil {
-		return nil, err
-	}
-
-	return &types.ProjectDetails{
-		Name:  form.GetString(forms.KeyProjectName),
-		Owner: form.GetString(forms.KeyProjectOwner),
-	}, nil
-}
 
 func createGoModule(module *types.Module, project types.ProjectDetails) error {
 	err := createModuleFolder(module)

@@ -5,13 +5,14 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/maxguuse/bruh/internal/forms"
 	"github.com/maxguuse/bruh/internal/types"
 	"gopkg.in/yaml.v2"
 )
 
 func InitProject() {
-	project, err := runAskForProjectDetailsForm()
-	if err != nil || project.Name == "" || project.Owner == "" {
+	project := forms.NewProjectDetails().Run()
+	if project.Name == "" || project.Owner == "" {
 		log.Fatal("Invalid project details")
 	}
 	log.Println("Project Details: ", project)
