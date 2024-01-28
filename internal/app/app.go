@@ -27,7 +27,7 @@ func runWelcomeForm() (subcommand types.SubcommandType) {
 		log.Fatal(err)
 	}
 
-	subcommand, ok := form.Get("subcommand").(types.SubcommandType)
+	subcommand, ok := form.Get(forms.KeySubcommand).(types.SubcommandType)
 	if !ok {
 		log.Fatal("Invalid subcommand type")
 	}

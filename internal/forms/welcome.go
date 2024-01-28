@@ -5,6 +5,10 @@ import (
 	"github.com/maxguuse/bruh/internal/types"
 )
 
+const (
+	KeySubcommand = "subcommand"
+)
+
 func Welcome() *huh.Form {
 	form := huh.NewForm(
 		huh.NewGroup(
@@ -14,7 +18,7 @@ func Welcome() *huh.Form {
 					huh.NewOption("Init Project", types.InitProject),
 					huh.NewOption("Create Module", types.CreateModule),
 				).
-				Key("subcommand"),
+				Key(KeySubcommand),
 		),
 	)
 

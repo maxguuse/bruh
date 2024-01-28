@@ -4,6 +4,11 @@ import (
 	"github.com/charmbracelet/huh"
 )
 
+const (
+	KeyProjectName  = "project_name"
+	KeyProjectOwner = "project_owner"
+)
+
 func AskForProjectDetails() *huh.Form {
 	form := huh.NewForm(
 		huh.NewGroup(
@@ -11,12 +16,12 @@ func AskForProjectDetails() *huh.Form {
 				Title("Project Name:").
 				CharLimit(50).
 				Inline(true).
-				Key("project_name"),
+				Key(KeyProjectName),
 			huh.NewInput().
 				Title("Owner:").
 				CharLimit(50).
 				Inline(true).
-				Key("project_owner"),
+				Key(KeyProjectOwner),
 		),
 	)
 

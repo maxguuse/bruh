@@ -16,8 +16,8 @@ func runAskForProjectDetailsForm() (*types.ProjectDetails, error) {
 	}
 
 	return &types.ProjectDetails{
-		Name:  form.GetString("project_name"),
-		Owner: form.GetString("project_owner"),
+		Name:  form.GetString(forms.KeyProjectName),
+		Owner: form.GetString(forms.KeyProjectOwner),
 	}, nil
 }
 

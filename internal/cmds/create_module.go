@@ -4,31 +4,22 @@ import (
 	"log"
 	"os"
 
-	"github.com/charmbracelet/huh"
+	"github.com/maxguuse/bruh/internal/forms"
 	"github.com/maxguuse/bruh/internal/types"
 	"gopkg.in/yaml.v2"
 )
 
 func CreateModule() {
-	var module *types.Module
+	form := forms.AskForModuleInfo()
 
-	err := huh.NewForm(
-		huh.NewGroup(
-			huh.NewSelect[types.ModuleType]().
-				Title("Module Type").
-				Options(
-					huh.NewOption("Application", types.App),
-					huh.NewOption("Library", types.Lib),
-				).
-				Value(&module.Type),
-			huh.NewInput().
-				Title("Module Name").
-				CharLimit(20).
-				Value(&module.Name),
-		),
-	).Run()
+	err := form.Run()
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	module := &types.Module{
+		Name: form.GetString(forms.KeyModuleName),
+		Type: types.ModuleType(form.GetInt(forms.KeyModuleType)),
 	}
 
 	cfg := &types.Config{}
