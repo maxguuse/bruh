@@ -8,7 +8,6 @@ import (
 	"github.com/maxguuse/bruh/internal/forms"
 	"github.com/maxguuse/bruh/internal/settings"
 	"github.com/maxguuse/bruh/internal/types"
-	"gopkg.in/yaml.v2"
 )
 
 func Cmd() {
@@ -18,25 +17,20 @@ func Cmd() {
 	}
 	log.Println("Project Details: ", project)
 
-	cfg := &settings.Settings{
+	stg := &settings.Settings{
 		Project: project,
 	}
 
-	file := "bruh.yaml"
-
-	if _, err := os.Stat(file); !os.IsNotExist(err) {
+	if _, err := os.Stat(settings.SettingsFile); !os.IsNotExist(err) {
 		log.Fatal("bruh.yaml already exists.")
 	}
 
-	blob, err := yaml.Marshal(cfg)
+	err := settings.Write(stg)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = os.WriteFile(file, blob, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
+	log.Println("Created bruh.yaml")
 
 	mkdirCmd := exec.Command("mkdir", types.AppsDir, types.LibsDir)
 	_, stderr := mkdirCmd.Output()
