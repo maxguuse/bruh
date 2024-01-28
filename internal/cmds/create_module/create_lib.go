@@ -4,10 +4,11 @@ import (
 	"log"
 	"os/exec"
 
+	"github.com/maxguuse/bruh/internal/settings"
 	"github.com/maxguuse/bruh/internal/types"
 )
 
-func createLib(lib *types.Module, project types.ProjectDetails) {
+func createLib(lib *types.Module, project *settings.ProjectDetails) {
 	err := createGoModule(lib, project)
 	if err != nil {
 		log.Fatal(err)

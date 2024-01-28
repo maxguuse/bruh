@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/charmbracelet/huh"
-	"github.com/maxguuse/bruh/internal/types"
+	"github.com/maxguuse/bruh/internal/settings"
 )
 
 const (
@@ -37,13 +37,13 @@ func NewProjectDetails() *ProjectDetails {
 	}
 }
 
-func (p *ProjectDetails) Run() *types.ProjectDetails {
+func (p *ProjectDetails) Run() *settings.ProjectDetails {
 	err := p.Form.Run()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return &types.ProjectDetails{
+	return &settings.ProjectDetails{
 		Name:  p.Form.GetString(KeyProjectName),
 		Owner: p.Form.GetString(KeyProjectOwner),
 	}

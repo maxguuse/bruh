@@ -6,6 +6,7 @@ import (
 	"os/exec"
 
 	"github.com/maxguuse/bruh/internal/forms"
+	"github.com/maxguuse/bruh/internal/settings"
 	"github.com/maxguuse/bruh/internal/types"
 	"gopkg.in/yaml.v2"
 )
@@ -17,8 +18,8 @@ func Cmd() {
 	}
 	log.Println("Project Details: ", project)
 
-	cfg := types.Config{
-		Project: *project,
+	cfg := &settings.Settings{
+		Project: project,
 	}
 
 	file := "bruh.yaml"

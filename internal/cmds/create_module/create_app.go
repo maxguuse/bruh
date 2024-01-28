@@ -4,10 +4,11 @@ import (
 	"log"
 	"os/exec"
 
+	"github.com/maxguuse/bruh/internal/settings"
 	"github.com/maxguuse/bruh/internal/types"
 )
 
-func createApp(app *types.Module, project types.ProjectDetails) {
+func createApp(app *types.Module, project *settings.ProjectDetails) {
 	err := createGoModule(app, project)
 	if err != nil {
 		log.Fatal(err)

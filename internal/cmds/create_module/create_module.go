@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/maxguuse/bruh/internal/forms"
+	"github.com/maxguuse/bruh/internal/settings"
 	"github.com/maxguuse/bruh/internal/types"
 	"gopkg.in/yaml.v2"
 )
@@ -12,7 +13,7 @@ import (
 func Cmd() {
 	module := forms.NewModuleInfo().Run()
 
-	cfg := &types.Config{}
+	cfg := &settings.Settings{}
 
 	blob, err := os.ReadFile("bruh.yaml")
 	if err != nil {
@@ -24,12 +25,10 @@ func Cmd() {
 		log.Fatal(err)
 	}
 
-	project := cfg.Project
-
 	switch module.Type {
 	case types.App:
-		createApp(module, project)
+		createApp(module, cfg.Project)
 	case types.Lib:
-		createLib(module, project)
+		createLib(module, cfg.Project)
 	}
 }

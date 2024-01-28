@@ -1,14 +1,5 @@
 package types
 
-type Config struct {
-	Project ProjectDetails `yaml:"project"`
-}
-
-type ProjectDetails struct {
-	Name  string `yaml:"name"`
-	Owner string `yaml:"owner"`
-}
-
 type Module struct {
 	Name string
 	Type ModuleType

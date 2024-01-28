@@ -3,10 +3,11 @@ package create_module
 import (
 	"os/exec"
 
+	"github.com/maxguuse/bruh/internal/settings"
 	"github.com/maxguuse/bruh/internal/types"
 )
 
-func createGoModule(module *types.Module, project types.ProjectDetails) error {
+func createGoModule(module *types.Module, project *settings.ProjectDetails) error {
 	err := createModuleFolder(module)
 	if err != nil {
 		return err
@@ -36,7 +37,7 @@ func createModuleFolder(module *types.Module) error {
 	return nil
 }
 
-func initGoModule(module *types.Module, project types.ProjectDetails) error {
+func initGoModule(module *types.Module, project *settings.ProjectDetails) error {
 	rootDir := module.Type.String()
 
 	importPath := "github.com/" + project.Owner + "/" + project.Name + "/" + rootDir + "/" + module.Name
