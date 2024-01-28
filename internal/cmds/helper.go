@@ -5,7 +5,6 @@ import (
 
 	"github.com/maxguuse/bruh/internal/forms"
 	"github.com/maxguuse/bruh/internal/types"
-	"github.com/samber/lo"
 )
 
 func runAskForProjectDetailsForm() (*types.ProjectDetails, error) {
@@ -22,18 +21,18 @@ func runAskForProjectDetailsForm() (*types.ProjectDetails, error) {
 	}, nil
 }
 
-func createGoModule(moduleName string, moduleType types.ModuleType, project types.ProjectDetails) error {
-	err := createModuleFolder(moduleName, moduleType)
+func createGoModule(module *types.Module, project types.ProjectDetails) error {
+	err := createModuleFolder(module)
 	if err != nil {
 		return err
 	}
 
-	err = initGoModule(moduleName, moduleType, project)
+	err = initGoModule(module, project)
 	if err != nil {
 		return err
 	}
 
-	err = addGoModuleToWorkspace(moduleName, moduleType)
+	err = addGoModuleToWorkspace(module)
 	if err != nil {
 		return err
 	}
@@ -41,11 +40,9 @@ func createGoModule(moduleName string, moduleType types.ModuleType, project type
 	return nil
 }
 
-func createModuleFolder(moduleName string, moduleType types.ModuleType) error {
-	rootDir := lo.If(moduleType == types.App, types.AppsDir).Else(types.LibsDir)
-
-	createAppFolderCmd := exec.Command("mkdir", moduleName)
-	createAppFolderCmd.Dir = rootDir
+func createModuleFolder(module *types.Module) error {
+	createAppFolderCmd := exec.Command("mkdir", module.Name)
+	createAppFolderCmd.Dir = module.Type.String()
 	_, err := createAppFolderCmd.Output()
 	if err != nil {
 		return err
@@ -54,13 +51,13 @@ func createModuleFolder(moduleName string, moduleType types.ModuleType) error {
 	return nil
 }
 
-func initGoModule(moduleName string, moduleType types.ModuleType, project types.ProjectDetails) error {
-	rootDir := lo.If(moduleType == types.App, types.AppsDir).Else(types.LibsDir)
+func initGoModule(module *types.Module, project types.ProjectDetails) error {
+	rootDir := module.Type.String()
 
-	module := "github.com/" + project.Owner + "/" + project.Name + "/" + rootDir + "/" + moduleName
+	importPath := "github.com/" + project.Owner + "/" + project.Name + "/" + rootDir + "/" + module.Name
 
-	goModInitCmd := exec.Command("go", "mod", "init", module)
-	goModInitCmd.Dir = rootDir + "/" + moduleName
+	goModInitCmd := exec.Command("go", "mod", "init", importPath)
+	goModInitCmd.Dir = rootDir + "/" + module.Name
 	_, err := goModInitCmd.Output()
 	if err != nil {
 		return err
@@ -69,11 +66,11 @@ func initGoModule(moduleName string, moduleType types.ModuleType, project types.
 	return nil
 }
 
-func addGoModuleToWorkspace(moduleName string, moduleType types.ModuleType) error {
-	rootDir := lo.If(moduleType == types.App, types.AppsDir).Else(types.LibsDir)
+func addGoModuleToWorkspace(module *types.Module) error {
+	rootDir := module.Type.String()
 
 	addModToWork := exec.Command("go", "work", "use", ".")
-	addModToWork.Dir = rootDir + "/" + moduleName
+	addModToWork.Dir = rootDir + "/" + module.Name
 	_, err := addModToWork.Output()
 	if err != nil {
 		return err

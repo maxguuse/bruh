@@ -10,8 +10,7 @@ import (
 )
 
 func CreateModule() {
-	var moduleType types.ModuleType
-	var moduleName string
+	var module *types.Module
 
 	err := huh.NewForm(
 		huh.NewGroup(
@@ -21,11 +20,11 @@ func CreateModule() {
 					huh.NewOption("Application", types.App),
 					huh.NewOption("Library", types.Lib),
 				).
-				Value(&moduleType),
+				Value(&module.Type),
 			huh.NewInput().
 				Title("Module Name").
 				CharLimit(20).
-				Value(&moduleName),
+				Value(&module.Name),
 		),
 	).Run()
 	if err != nil {
@@ -46,10 +45,10 @@ func CreateModule() {
 
 	project := cfg.Project
 
-	switch moduleType {
+	switch module.Type {
 	case types.App:
-		createApp(moduleName, project)
+		createApp(module, project)
 	case types.Lib:
-		createLib(moduleName, project)
+		createLib(module, project)
 	}
 }

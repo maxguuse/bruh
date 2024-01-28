@@ -7,15 +7,15 @@ import (
 	"github.com/maxguuse/bruh/internal/types"
 )
 
-func createApp(appName string, project types.ProjectDetails) {
-	err := createGoModule(appName, types.App, project)
+func createApp(app *types.Module, project types.ProjectDetails) {
+	err := createGoModule(app, project)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Created Go module: ", appName)
+	log.Println("Created Go module: ", app.Name)
 
 	createBaseFoldersCmd := exec.Command("mkdir", "cmd", "internal")
-	createBaseFoldersCmd.Dir = types.AppsDir + "/" + appName
+	createBaseFoldersCmd.Dir = types.AppsDir + "/" + app.Name
 	_, stderr := createBaseFoldersCmd.Output()
 	if stderr != nil {
 		log.Fatal(stderr)
@@ -24,7 +24,7 @@ func createApp(appName string, project types.ProjectDetails) {
 	log.Println("Created base folders: ", "cmd", "internal")
 
 	createMainFileCmd := exec.Command("touch", "main.go")
-	createMainFileCmd.Dir = types.AppsDir + "/" + appName + "/cmd"
+	createMainFileCmd.Dir = types.AppsDir + "/" + app.Name + "/cmd"
 	_, stderr = createMainFileCmd.Output()
 	if stderr != nil {
 		log.Fatal(stderr)
