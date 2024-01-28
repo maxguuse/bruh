@@ -1,7 +1,8 @@
 package app
 
 import (
-	"github.com/maxguuse/bruh/internal/cmds"
+	"github.com/maxguuse/bruh/internal/cmds/create_module"
+	"github.com/maxguuse/bruh/internal/cmds/init_project"
 	"github.com/maxguuse/bruh/internal/forms"
 	"github.com/maxguuse/bruh/internal/types"
 )
@@ -11,8 +12,8 @@ func Run() {
 
 	switch subcommand {
 	case types.InitProject:
-		cmds.InitProject()
+		init_project.Cmd()
 	case types.CreateModule:
-		cmds.CreateModule()
+		create_module.Cmd()
 	}
 }

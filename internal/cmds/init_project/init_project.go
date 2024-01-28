@@ -1,4 +1,4 @@
-package cmds
+package init_project
 
 import (
 	"log"
@@ -10,7 +10,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func InitProject() {
+func Cmd() {
 	project := forms.NewProjectDetails().Run()
 	if project.Name == "" || project.Owner == "" {
 		log.Fatal("Invalid project details")

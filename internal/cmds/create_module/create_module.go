@@ -1,4 +1,4 @@
-package cmds
+package create_module
 
 import (
 	"log"
@@ -9,7 +9,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func CreateModule() {
+func Cmd() {
 	module := forms.NewModuleInfo().Run()
 
 	cfg := &types.Config{}

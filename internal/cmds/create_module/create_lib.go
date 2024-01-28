@@ -1,4 +1,4 @@
-package cmds
+package create_module
 
 import (
 	"log"
