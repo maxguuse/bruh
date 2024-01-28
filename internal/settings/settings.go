@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 
+	"github.com/maxguuse/bruh/internal/fs"
 	"gopkg.in/yaml.v2"
 )
 
@@ -27,6 +28,11 @@ var (
 )
 
 func TryParse() (*Settings, error) {
+	isExists := fs.IsExists(SettingsFile)
+	if !isExists {
+		return nil, ErrFileNotFound
+	}
+
 	stg := &Settings{}
 
 	blob, err := os.ReadFile(SettingsFile)

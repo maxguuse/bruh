@@ -2,8 +2,8 @@ package create_module
 
 import (
 	"log"
-	"os/exec"
 
+	"github.com/maxguuse/bruh/internal/fs"
 	"github.com/maxguuse/bruh/internal/settings"
 	"github.com/maxguuse/bruh/internal/types"
 )
@@ -15,11 +15,9 @@ func createLib(lib *types.Module, project *settings.ProjectDetails) {
 	}
 	log.Println("Created Go module: ", lib.Name)
 
-	createMainFileCmd := exec.Command("touch", "main.go")
-	createMainFileCmd.Dir = types.LibsDir + "/" + lib.Name
-	_, stderr := createMainFileCmd.Output()
-	if stderr != nil {
-		log.Fatal(stderr)
+	err = fs.Touch(types.LibsDir+"/"+lib.Name, "main.go")
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	log.Println("Created main file: ", "main.go")

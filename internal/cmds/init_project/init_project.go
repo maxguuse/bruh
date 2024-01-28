@@ -2,10 +2,9 @@ package init_project
 
 import (
 	"log"
-	"os"
-	"os/exec"
 
 	"github.com/maxguuse/bruh/internal/forms"
+	"github.com/maxguuse/bruh/internal/fs"
 	"github.com/maxguuse/bruh/internal/settings"
 	"github.com/maxguuse/bruh/internal/types"
 )
@@ -21,8 +20,9 @@ func Cmd() {
 		Project: project,
 	}
 
-	if _, err := os.Stat(settings.SettingsFile); !os.IsNotExist(err) {
-		log.Fatal("bruh.yaml already exists.")
+	isExists := fs.IsExists("bruh.yaml")
+	if isExists {
+		log.Fatal("bruh.yaml file already exists")
 	}
 
 	err := settings.Write(stg)
@@ -32,18 +32,16 @@ func Cmd() {
 
 	log.Println("Created bruh.yaml")
 
-	mkdirCmd := exec.Command("mkdir", types.AppsDir, types.LibsDir)
-	_, stderr := mkdirCmd.Output()
-	if stderr != nil {
-		log.Fatal(stderr)
+	err = fs.Mkdir(".", types.AppsDir, types.LibsDir)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	log.Println("Created directories: ", types.AppsDir, types.LibsDir)
 
-	goWorkInit := exec.Command("go", "work", "init")
-	_, stderr = goWorkInit.Output()
-	if stderr != nil {
-		log.Fatal(stderr)
+	err = fs.GoWorkInit()
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	log.Println("Initialized go workspace")

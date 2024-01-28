@@ -2,33 +2,31 @@ package create_module
 
 import (
 	"log"
-	"os/exec"
 
+	"github.com/maxguuse/bruh/internal/fs"
 	"github.com/maxguuse/bruh/internal/settings"
 	"github.com/maxguuse/bruh/internal/types"
 )
 
 func createApp(app *types.Module, project *settings.ProjectDetails) {
+	root := types.AppsDir + "/" + app.Name
+
 	err := createGoModule(app, project)
 	if err != nil {
 		log.Fatal(err)
 	}
 	log.Println("Created Go module: ", app.Name)
 
-	createBaseFoldersCmd := exec.Command("mkdir", "cmd", "internal")
-	createBaseFoldersCmd.Dir = types.AppsDir + "/" + app.Name
-	_, stderr := createBaseFoldersCmd.Output()
-	if stderr != nil {
-		log.Fatal(stderr)
+	err = fs.Mkdir(root, "cmd", "internal")
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	log.Println("Created base folders: ", "cmd", "internal")
 
-	createMainFileCmd := exec.Command("touch", "main.go")
-	createMainFileCmd.Dir = types.AppsDir + "/" + app.Name + "/cmd"
-	_, stderr = createMainFileCmd.Output()
-	if stderr != nil {
-		log.Fatal(stderr)
+	err = fs.Touch(root+"/cmd", "main.go")
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	log.Println("Created main file: ", "main.go")
