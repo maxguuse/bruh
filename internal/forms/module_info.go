@@ -46,6 +46,6 @@ func (m *ModuleInfo) Run() *types.Module {
 
 	return &types.Module{
 		Name: m.Form.GetString(KeyModuleName),
-		Type: types.ModuleType(m.Form.GetInt(KeyModuleType)),
+		Type: m.Form.Get(KeyModuleType).(types.ModuleType),
 	}
 }

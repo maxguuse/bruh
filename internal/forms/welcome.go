@@ -4,7 +4,9 @@ import (
 	"log"
 
 	"github.com/charmbracelet/huh"
+	"github.com/maxguuse/bruh/internal/settings"
 	"github.com/maxguuse/bruh/internal/types"
+	"github.com/samber/lo"
 )
 
 const (
@@ -16,14 +18,26 @@ type Welcome struct {
 }
 
 func NewWelcome() *Welcome {
+	_, err := settings.TryParse()
+
+	options := []huh.Option[types.SubcommandType]{
+		huh.NewOption("Init Project", types.InitProject),
+		huh.NewOption("Create Module", types.CreateModule),
+	}
+
+	filteredOptions := lo.Filter(options, func(option huh.Option[types.SubcommandType], i int) bool {
+		if err == nil && option.Value == types.InitProject {
+			return false
+		}
+
+		return true
+	})
+
 	form := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[types.SubcommandType]().
 				Title("Subcommand").
-				Options(
-					huh.NewOption("Init Project", types.InitProject),
-					huh.NewOption("Create Module", types.CreateModule),
-				).
+				Options(filteredOptions...).
 				Key(KeySubcommand),
 		),
 	)
